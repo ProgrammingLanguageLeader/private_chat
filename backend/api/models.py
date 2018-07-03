@@ -20,5 +20,5 @@ class Message(models.Model):
         on_delete=models.CASCADE,
         related_name='recipient'
     )
-    sending_time = models.DateTimeField(auto_now_add=True)
+    sending_time = models.DateTimeField(auto_now_add=True, blank=True)
     text = models.TextField(max_length=4096)
