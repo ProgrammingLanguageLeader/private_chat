@@ -1,42 +1,18 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import 'tachyons';
 
 import './App.css';
 import Logo from './components/Logo/Logo';
-import 'tachyons';
-import Signin from './components/Signin/Signin';
+import SignIn from './components/SignIn/SignIn';
 
-class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-      route: ''
-    }
-  }
-
-  onRouteChange = (route) => {
-    this.setState({
-      route: route
-    });
-  }
-
-  render() {
-    return (
-      <div>
-        { this.state.route === 'home'
-          ? <div>
-              <p className='f1 pa2 white' onClick={() => this.onRouteChange('')}>
-                You are logged in! (click to Sign Out)
-              </p>
-            </div>
-          : <Logo onRouteChange={this.onRouteChange} />
-        }
-        { this.state.route === 'signin'
-          ? <Signin onRouteChange={this.onRouteChange} />
-          : <div></div>
-        }
-      </div>
-    );
-  }
-}
+const App = () => (
+  <Router>
+    <div>
+      <Route exact path="/" component={Logo} />
+      <Route path="/sign_in" component={SignIn} />
+    </div>
+  </Router>
+);
 
 export default App;
