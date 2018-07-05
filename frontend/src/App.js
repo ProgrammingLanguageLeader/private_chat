@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
+
 import './App.css';
 import Logo from './components/Logo/Logo';
 import 'tachyons';
 import Signin from './components/Signin/Signin';
 
 class App extends Component {
-
   constructor() {
     super();
     this.state = {
@@ -14,14 +14,20 @@ class App extends Component {
   }
 
   onRouteChange = (route) => {
-    this.setState({route: route});
+    this.setState({
+      route: route
+    });
   }
 
   render() {
     return (
       <div>
         { this.state.route === 'home'
-          ? <div><p className='f1 pa2 white' onClick={() => this.onRouteChange('')}>You are logged in! (click to Sign Out)</p></div>
+          ? <div>
+              <p className='f1 pa2 white' onClick={() => this.onRouteChange('')}>
+                You are logged in! (click to Sign Out)
+              </p>
+            </div>
           : <Logo onRouteChange={this.onRouteChange} />
         }
         { this.state.route === 'signin'
