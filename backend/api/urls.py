@@ -11,6 +11,10 @@ import api.views as chat_views
 urlpatterns = [
     path('', get_schema_view()),
     path(
+        'sign_up',
+        chat_views.SignUpView.as_view()
+    ),
+    path(
         'auth/',
         include(
             'rest_framework.urls',

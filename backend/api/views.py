@@ -1,11 +1,11 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
+from rest_framework.status import HTTP_400_BAD_REQUEST
 from django.db.models import Q
 
-from .models import Message, User
-from .serializers import MessageSerializer
+from .models import Message
+from .serializers import MessageSerializer, UserSerializer
 
 
 class TeapotView(APIView):
@@ -14,6 +14,27 @@ class TeapotView(APIView):
         return Response(
             data='Teapot can\'t talk with you. He is busy now.',
             status=http_418_i_am_a_teapot
+        )
+
+
+class SignUpView(APIView):
+    def post(self, request, format=None):
+        if request.user.is_authenticated:
+            return Response(
+                data='You must log out to perform this action'
+            )
+        username = request.data.get('username')
+        password = request.data.get('password')
+        serializer = UserSerializer(data={
+            'username': username,
+            'password': password,
+        })
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data='OK')
+        return Response(
+            data=serializer.errors,
+            status=HTTP_400_BAD_REQUEST
         )
 
 
@@ -38,20 +59,17 @@ class SendMessageView(APIView):
 
     def post(self, request, format=None):
         sender = request.user.pk
-        recipient = int(request.data["recipient"])
-        text = request.data["text"]
+        recipient = request.data.get('recipient')
+        text = request.data.get('text')
         serializer = MessageSerializer(data={
-            "sender": sender,
-            "recipient": recipient,
-            "text": text
+            'sender': sender,
+            'recipient': recipient,
+            'text': text
         })
         if serializer.is_valid():
             serializer.save()
-            return Response(
-                data='OK',
-                status=HTTP_200_OK
-            )
+            return Response(data='OK')
         return Response(
-            data='Check your request data',
+            data=serializer.errors,
             status=HTTP_400_BAD_REQUEST
         )
