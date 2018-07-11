@@ -23,12 +23,7 @@ class SignUpView(APIView):
             return Response(
                 data='You must log out to perform this action'
             )
-        username = request.data.get('username')
-        password = request.data.get('password')
-        serializer = UserSerializer(data={
-            'username': username,
-            'password': password,
-        })
+        serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(data='OK')
