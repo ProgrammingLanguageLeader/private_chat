@@ -103,6 +103,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = 'api.User'
 
+AUTHENTICATION_BACKENDS = ('api.auth_backend.UsernameOrEmailAuthBackend',)
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 
