@@ -3,9 +3,11 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.status import HTTP_400_BAD_REQUEST
 from django.db.models import Q
+from django.contrib.sites.shortcuts import get_current_site
 
-from .models import Message
+from .models import Message, User
 from .serializers import MessageSerializer, UserSerializer
+from email_confirmation.confirmation_letter import send_confirmation_letter
 
 
 class TeapotView(APIView):
@@ -25,8 +27,15 @@ class SignUpView(APIView):
             )
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(data='OK')
+            user = User(**serializer.validated_data)
+            user.is_active = False
+            user.save()
+            current_site = get_current_site(request)
+            send_confirmation_letter(current_site, user)
+            return Response(
+                data='Please confirm your email address '
+                     'to complete the registration'
+            )
         return Response(
             data=serializer.errors,
             status=HTTP_400_BAD_REQUEST

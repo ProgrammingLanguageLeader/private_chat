@@ -18,6 +18,7 @@ from django.urls import path, include
 from django.views import generic
 
 from api.urls import urlpatterns as api_urls
+from email_confirmation.urls import urlpatterns as confirmation_urls
 
 
 urlpatterns = [
@@ -29,5 +30,11 @@ urlpatterns = [
         )
     ),
     path('api/', include(api_urls)),
+    path(
+        'confirmation/',
+        include(
+            (confirmation_urls, 'email_confirmation'),
+            namespace='confirmation')
+    ),
     path('admin/', admin.site.urls),
 ]
