@@ -12,7 +12,8 @@ urlpatterns = [
     path('', get_schema_view()),
     path(
         'sign_up',
-        chat_views.SignUpView.as_view()
+        chat_views.SignUpView.as_view(),
+        name='sign_up'
     ),
     path(
         'auth/',

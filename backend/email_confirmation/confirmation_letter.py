@@ -19,6 +19,5 @@ def send_confirmation_letter(current_site, user):
     })
     mail_subject = 'Activate your account'
     to_email = user.email
-    letter = EmailMessage(mail_subject, message, to=[to_email])
-
+    letter = EmailMessage(mail_subject, message,  to=[to_email])
     letter.send()
