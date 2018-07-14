@@ -4,10 +4,13 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.status import HTTP_400_BAD_REQUEST
 from django.db.models import Q
 from django.contrib.sites.shortcuts import get_current_site
+from django.utils.encoding import force_text
+from django.utils.http import urlsafe_base64_decode
 
-from .models import Message, User
-from .serializers import MessageSerializer, UserSerializer
-from email_confirmation.confirmation_letter import send_confirmation_letter
+from .models import Message, User, Email
+from .serializers import MessageSerializer, UserSerializer, SignUpSerializer
+from .confirmation_letter import send_confirmation_letter
+from .tokens import account_activation_token
 
 
 class TeapotView(APIView):
@@ -22,24 +25,56 @@ class TeapotView(APIView):
 class SignUpView(APIView):
     def post(self, request, format=None):
         if request.user.is_authenticated:
+            return Response(data='You must log out to perform this action')
+        view_serializer = SignUpSerializer(data=request.data)
+        if not view_serializer.is_valid():
             return Response(
-                data='You must log out to perform this action'
+                data=view_serializer.errors,
+                status=HTTP_400_BAD_REQUEST
             )
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            user = User(**serializer.validated_data)
-            user.is_active = False
-            user.save()
-            current_site = get_current_site(request)
-            send_confirmation_letter(current_site, user)
+        email_address = view_serializer.validated_data['email']
+        user_serializer = UserSerializer(data=request.data)
+        if not user_serializer.is_valid():
             return Response(
-                data='Please confirm your email address '
-                     'to complete the registration'
+                data=user_serializer.errors,
+                status=HTTP_400_BAD_REQUEST
             )
-        return Response(
-            data=serializer.errors,
-            status=HTTP_400_BAD_REQUEST
+        user = User(**user_serializer.validated_data)
+        user.set_password(request.data['password'])
+        user.is_active = False
+        user.save()
+        email_object = Email(
+            address=email_address,
+            user=user,
+            is_main=True
         )
+        email_object.save()
+        current_site = get_current_site(request)
+        send_confirmation_letter(current_site, user, email_address)
+        return Response(
+            data='Please confirm your email address '
+                 'to complete the registration'
+        )
+
+
+class ActivateUserView(APIView):
+    def get(self, request, user_id_base_64, token):
+        try:
+            uid = force_text(urlsafe_base64_decode(user_id_base_64))
+            user = User.objects.get(pk=uid)
+        except (ValueError, User.DoesNotExist):
+            user = None
+        if user and account_activation_token.check_token(user, token):
+            user.is_active = True
+            user.save()
+            email = Email.objects.get(user=user, is_main=True)
+            email.verified = True
+            email.save()
+            return Response(
+                data='Thank you for your email confirmation. '
+                'Now you can login your account.'
+            )
+        return Response(data='Activation link is invalid!')
 
 
 class GetMessagesView(APIView):

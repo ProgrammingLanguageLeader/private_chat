@@ -6,7 +6,9 @@ from django.template.loader import render_to_string
 from .tokens import account_activation_token
 
 
-def send_confirmation_letter(current_site, user):
+def send_confirmation_letter(current_site, user, email_address):
+    if not email_address:
+        raise ValueError("You must specify an email")
     user_id_base_64 = urlsafe_base64_encode(
         force_bytes(user.pk)
     ).decode()
@@ -18,6 +20,5 @@ def send_confirmation_letter(current_site, user):
         'token': token,
     })
     mail_subject = 'Activate your account'
-    to_email = user.email
-    letter = EmailMessage(mail_subject, message,  to=[to_email])
+    letter = EmailMessage(mail_subject, message, to=[email_address])
     letter.send()
