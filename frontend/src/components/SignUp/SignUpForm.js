@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import StyledTextBox from '../Common/StyledTextBox';
 import Button from '../Common/Button';
 import StyledForm from '../Common/StyledForm';
 import StyledLabel from '../Common/StyledLabel';
 import Group from '../Common/Group';
+import { signUp } from '../../api';
 
 class SignUpForm extends Component {
   constructor(props) {
@@ -15,7 +17,7 @@ class SignUpForm extends Component {
       password: '',
       passwordConfirmation: '',
       firstName: '',
-      lastName: ''
+      lastName: '',
     };
 
     this.onChange = this.onChange.bind(this);
@@ -30,7 +32,13 @@ class SignUpForm extends Component {
 
   onSubmit(event) {
     event.preventDefault();
+    const { email, username, password, passwordConfirmation, firstName, lastName } = this.state;
+    if (password !== passwordConfirmation) {
+      console.log(password, ' !== ', passwordConfirmation);
+      return;
+    }
     console.log(this.state);
+    signUp(email, username, password, firstName, lastName);
   }
 
   render() {
@@ -59,7 +67,7 @@ class SignUpForm extends Component {
             onChange={ this.onChange }
           />
           <StyledTextBox 
-            name="password_confirmation" 
+            name="passwordConfirmation" 
             type="password" 
             placeholder="Password confirmation"
             onChange={ this.onChange }
@@ -67,13 +75,13 @@ class SignUpForm extends Component {
         </Group>
         <Group>
           <StyledTextBox 
-            name="first_name" 
+            name="firstName" 
             type="text" 
             placeholder="First name"
             onChange={ this.onChange }
           />
           <StyledTextBox 
-            name="last_name"
+            name="lastName"
             type="text" 
             placeholder="Last name" 
             onChange={ this.onChange }
@@ -89,4 +97,10 @@ class SignUpForm extends Component {
   }
 }
 
-export default SignUpForm;
+const mapStateToProps = () => {
+  return {
+
+  };
+};
+
+export default connect(mapStateToProps)(SignUpForm);

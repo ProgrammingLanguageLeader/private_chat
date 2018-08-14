@@ -22,7 +22,5 @@ export default connect(
   state => ({
     propName: state
   }),
-  dispatch => ({
-
-  })
+  dispatch => ({})
 )(App);

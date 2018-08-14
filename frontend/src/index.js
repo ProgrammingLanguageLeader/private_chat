@@ -16,32 +16,3 @@ ReactDOM.render(
   document.getElementById('root')
 );
 registerServiceWorker();
-
-// const playlist = (state = [], action) => {
-//   console.log(action);
-//   state = {
-//     payload: action.payload
-//   };
-//   return state;
-// }
-
-// const store = createStore(playlist);
-
-// store.subscribe( () => {
-//   let state = store.getState();
-//   console.log(`payload = ${state.payload}`);
-// })
-
-// store.dispatch(
-//   {
-//     type: 'SOME_ACTION',
-//     payload: 'Ура'
-//   }
-// )
-
-// store.dispatch(
-//   {
-//     type: 'ANOTHER_ACTION',
-//     payload: 'Еще одно ура'
-//   }
-// )
