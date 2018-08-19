@@ -11,11 +11,9 @@ const authTokenRefresh = () => {
 };
 
 const signUp = (email, username, password, firstName, lastName) => {
-  const RELATIVE_URL = '/api/sign_up';
-  const METHOD = 'POST';
   return axios({
-    method: METHOD,
-    url: BASE_URL + RELATIVE_URL,
+    method: 'post',
+    url: BASE_URL + '/api/sign_up',
     data: {
       email: email,
       username: username,

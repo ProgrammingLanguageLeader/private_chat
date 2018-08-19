@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-const MyLink = styled(Link)`
+const StyledLink = styled(Link)`
   text-decoration: none;
 `;
 
@@ -10,14 +10,14 @@ const StyledHeader = styled.h1.attrs({
   className: 'ma4 white'
 })``;
 
-const Logo = () => {
+const HomePage = () => {
   return (
-    <MyLink to="/sign_in">
+    <StyledLink to="/sign_in">
       <StyledHeader>
         Animated Logo. Click On Me! (this is temporary)
       </StyledHeader>
-    </MyLink>
+    </StyledLink>
   );
 }
 
-export default Logo;
+export default HomePage;

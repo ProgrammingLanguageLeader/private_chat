@@ -1,26 +1,34 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { Router, Route } from 'react-router-dom';
 import 'tachyons';
 
 import './App.css';
-import Logo from './components/Logo';
-import SignIn from './components/SignIn';
-import SignUp from './components/SignUp';
+import { history } from './helpers';
+import HomePage from './components/HomePage';
+import SignInPage from './components/SignInPage';
+import SignUpPage from './components/SignUpPage';
 
-const App = () => (
-  <Router>
-    <div>
-      <Route exact path="/" component={Logo} />
-      <Route path="/sign_in" component={SignIn} />
-      <Route path="/sign_up" component={SignUp} />
-    </div>
-  </Router>
-);
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+  }
 
-export default connect(
-  state => ({
-    propName: state
-  }),
-  dispatch => ({})
-)(App);
+  render() {
+    return (
+      <Router history={history}>
+        <div>
+          <Route exact path="/" component={HomePage} />
+          <Route path="/sign_in" component={SignInPage} />
+          <Route path="/sign_up" component={SignUpPage} />
+        </div>
+      </Router>
+    );
+  }
+}
+
+const mapStateToProps = state => {
+  return {};
+};
+
+export default connect(mapStateToProps)(App);

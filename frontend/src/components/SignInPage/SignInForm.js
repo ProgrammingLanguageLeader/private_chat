@@ -6,6 +6,7 @@ import Button from '../Common/Button';
 import StyledForm from '../Common/StyledForm';
 import StyledLabel from '../Common/StyledLabel';
 import Group from '../Common/Group';
+import { authActions } from '../../actions';
 
 class SignInForm extends Component {
   constructor(props) {
@@ -27,6 +28,10 @@ class SignInForm extends Component {
 
   onSubmit(event) {
     event.preventDefault();
+    const { username, password } = this.state;
+    if (username && password) {
+      this.props.dispatch(authActions.login(username, password));
+    }
   }
 
   render() {
@@ -59,11 +64,11 @@ class SignInForm extends Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => {
-  console.log('ownProps', ownProps);
-  console.log('state', state);
+const mapStateToProps = (state) => {
+  console.log(state);
+  const { auth } = state;
   return {
-
+    auth
   };
 };
 

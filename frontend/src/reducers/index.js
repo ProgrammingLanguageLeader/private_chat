@@ -3,9 +3,9 @@ import { routerReducer } from 'react-router-redux';
 
 import authReducer from './auth';
 
-const chatApp = combineReducers({
+const rootReducer = combineReducers({
   routing: routerReducer,
-  authReducer
+  auth: authReducer,
 });
 
-export default chatApp;
+export default rootReducer;
