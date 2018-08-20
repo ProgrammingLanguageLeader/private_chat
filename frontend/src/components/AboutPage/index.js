@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
+import styled from 'styled-components';
 
 import Main from '../Common/Main';
 import Header from '../Common/Header';
 import NavBar from '../Common/NavBar';
-import SignUpForm from './SignUpForm';
 
-class SignUp extends Component {
+const StyledHeader = styled.h1.attrs({
+  className: 'ma4 white'
+})``;
+
+class About extends Component {
   render() {
     return (
       <div>
@@ -13,11 +17,13 @@ class SignUp extends Component {
           <NavBar></NavBar>
         </Header>
         <Main>
-          <SignUpForm />
+          <StyledHeader>
+            The information about the project will be here
+          </StyledHeader>
         </Main>
       </div>
     );
   }
 }
 
-export default SignUp;
+export default About; 

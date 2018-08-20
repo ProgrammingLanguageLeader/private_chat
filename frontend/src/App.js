@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Router, Route } from 'react-router-dom';
 import 'tachyons';
@@ -8,8 +8,9 @@ import { history } from './helpers';
 import HomePage from './components/HomePage';
 import SignInPage from './components/SignInPage';
 import SignUpPage from './components/SignUpPage';
+import AboutPage from './components/AboutPage';
 
-class App extends React.Component {
+class App extends Component {
   constructor(props) {
     super(props);
   }
@@ -21,6 +22,7 @@ class App extends React.Component {
           <Route exact path="/" component={HomePage} />
           <Route path="/sign_in" component={SignInPage} />
           <Route path="/sign_up" component={SignUpPage} />
+          <Route path="/about" component={AboutPage} />
         </div>
       </Router>
     );
