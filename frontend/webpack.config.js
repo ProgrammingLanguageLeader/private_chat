@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const htmlPlugin = new HtmlWebpackPlugin({
     template: './src/index.html',
+    favicon: './public/favicon.ico',
     filename: './index.html'
 });
 
@@ -12,6 +13,7 @@ module.exports = {
     ],
     output: {
         path: path.resolve(__dirname, 'build'),
+        publicPath: '/',
         filename: 'bundle.js'
     },
     module: {
@@ -28,7 +30,7 @@ module.exports = {
                 use: ['style-loader', 'css-loader']
            },
            {
-                test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+                test: /\.(woff(2)?|ico|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
                 use: [{
                     loader: 'file-loader',
                     options: {
