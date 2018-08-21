@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import User, Message
+from .models import User, Message, Email
 
 
 class SignUpSerializer(serializers.Serializer):
@@ -36,6 +36,12 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
+
+
+class EmailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Email
+        fields = ('address', )
 
 
 class MessageSerializer(serializers.ModelSerializer):

@@ -8,7 +8,9 @@ from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 
 from .models import Message, User, Email
-from .serializers import MessageSerializer, UserSerializer, SignUpSerializer
+from .serializers import (
+    MessageSerializer, UserSerializer, SignUpSerializer, EmailSerializer
+)
 from .confirmation_letter import send_confirmation_letter
 from .tokens import account_activation_token
 
@@ -26,19 +28,32 @@ class SignUpView(APIView):
     def post(self, request, format=None):
         if request.user.is_authenticated:
             return Response(data='You must log out to perform this action')
+
         view_serializer = SignUpSerializer(data=request.data)
         if not view_serializer.is_valid():
             return Response(
                 data=view_serializer.errors,
                 status=HTTP_400_BAD_REQUEST
             )
+
+        # check if the email address is unique
         email_address = view_serializer.validated_data['email']
+        email_serializer = EmailSerializer(data={
+            'address': email_address
+        })
+        if not email_serializer.is_valid():
+            return Response(
+                data=email_serializer.errors,
+                status=HTTP_400_BAD_REQUEST
+            )
+
         user_serializer = UserSerializer(data=request.data)
         if not user_serializer.is_valid():
             return Response(
                 data=user_serializer.errors,
                 status=HTTP_400_BAD_REQUEST
             )
+
         user = User(**user_serializer.validated_data)
         user.set_password(request.data['password'])
         user.is_active = False
