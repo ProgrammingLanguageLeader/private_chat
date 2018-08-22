@@ -16,6 +16,10 @@ class SignUpSerializer(serializers.Serializer):
         required=True,
         max_length=256
     )
+    password_confirmation = serializers.CharField(
+        required=True,
+        max_length=256
+    )
     first_name = serializers.CharField(
         required=True,
         max_length=100
@@ -24,6 +28,11 @@ class SignUpSerializer(serializers.Serializer):
         required=True,
         max_length=100
     )
+
+    def validate(self, data):
+        if data['password'] != data['password_confirmation']:
+            raise serializers.ValidationError('Passwords do not match')
+        return data
 
 
 class UserSerializer(serializers.ModelSerializer):
