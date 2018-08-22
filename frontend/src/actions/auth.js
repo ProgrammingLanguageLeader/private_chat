@@ -18,7 +18,6 @@ const login = (username, password) => {
           history.push('/');
         },
         error => {
-          console.log(error);
           dispatch({
             type: authConstants.LOGIN_FAILURE,
             error

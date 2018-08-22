@@ -14,7 +14,6 @@ const login = (username, password) => {
   })
     .then(response => {
       const { access, refresh } = response.data;
-      console.log({ access, refresh });
       return { access, refresh };
     });
 };

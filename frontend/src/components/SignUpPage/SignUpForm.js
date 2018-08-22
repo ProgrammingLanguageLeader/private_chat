@@ -6,7 +6,9 @@ import Button from '../Common/Button';
 import StyledForm from '../Common/StyledForm';
 import StyledLabel from '../Common/StyledLabel';
 import Group from '../Common/Group';
-import { signUp } from '../../api';
+import FormErrors from '../Common/FormErrors';
+import Alert from '../Common/Alert';
+import { registrationActions } from '../../actions';
 
 class SignUpForm extends Component {
   constructor(props) {
@@ -17,7 +19,7 @@ class SignUpForm extends Component {
       password: '',
       passwordConfirmation: '',
       firstName: '',
-      lastName: '',
+      lastName: ''
     };
 
     this.onChange = this.onChange.bind(this);
@@ -32,45 +34,50 @@ class SignUpForm extends Component {
 
   onSubmit(event) {
     event.preventDefault();
-    const { email, username, password, passwordConfirmation, firstName, lastName } = this.state;
-    if (password !== passwordConfirmation) {
-      console.log(password, ' !== ', passwordConfirmation);
-      return;
-    }
-    console.log(this.state);
-    signUp(email, username, password, firstName, lastName);
+    const { username, email, password, passwordConfirmation, firstName, lastName } = this.state;
+    this.props.dispatch(
+      registrationActions.register(username, email, password, passwordConfirmation, firstName, lastName)
+    );
   }
 
   render() {
     return (
-      <StyledForm onSubmit={ this.onSubmit }>
-        <StyledLabel>
-          SIGN UP
-        </StyledLabel>
+      <StyledForm onSubmit={this.onSubmit}>
+        <StyledLabel>SIGN UP</StyledLabel>
+        {(this.props.registration.errors) && (
+          <Group>
+            <FormErrors formErrors={this.props.registration.errors}></FormErrors>
+          </Group>
+        )}
+        {(this.props.registration.success) && (
+          <Group>
+            <Alert>The account has been successfully registered</Alert>
+          </Group>
+        )}
         <Group>
           <StyledTextBox 
             name="username" 
             type="text" 
             placeholder="Username" 
-            onChange={ this.onChange }
+            onChange={this.onChange}
           />
           <StyledTextBox 
             name="email" 
             type="email" 
             placeholder="Email" 
-            onChange={ this.onChange }
+            onChange={this.onChange}
           />
           <StyledTextBox 
             name="password" 
             type="password" 
             placeholder="Password" 
-            onChange={ this.onChange }
+            onChange={this.onChange}
           />
           <StyledTextBox 
             name="passwordConfirmation" 
             type="password" 
             placeholder="Password confirmation"
-            onChange={ this.onChange }
+            onChange={this.onChange}
           />
         </Group>
         <Group>
@@ -78,13 +85,13 @@ class SignUpForm extends Component {
             name="firstName" 
             type="text" 
             placeholder="First name"
-            onChange={ this.onChange }
+            onChange={this.onChange}
           />
           <StyledTextBox 
             name="lastName"
             type="text" 
             placeholder="Last name" 
-            onChange={ this.onChange }
+            onChange={this.onChange}
           />
         </Group>
         <Group>
@@ -97,9 +104,10 @@ class SignUpForm extends Component {
   }
 }
 
-const mapStateToProps = () => {
+const mapStateToProps = (state) => {
+  const { registration } = state;
   return {
-
+    registration
   };
 };
 

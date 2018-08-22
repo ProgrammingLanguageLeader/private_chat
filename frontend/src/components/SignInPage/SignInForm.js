@@ -65,7 +65,6 @@ class SignInForm extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state);
   const { auth } = state;
   return {
     auth
