@@ -9,14 +9,12 @@ Create and activate virtual environment.
 
 ##### Linux or Mac OS
 ```bash
-cd backend
 virtualenv venv -p python3
 source venv/bin/activate
 ```
 
 ##### Windows
 ```bash
-cd backend
 virtualenv venv
 venv\Scripts\activate.bat
 ```
@@ -29,3 +27,19 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
+### Frontend
+
+Install the dependencies
+```bash
+npm install
+```
+
+Run a build script
+```bash
+npm run build
+```
+
+Run the development server
+```bash
+npm start
+```
