@@ -10,7 +10,7 @@ from django.utils.http import urlsafe_base64_decode
 
 from .models import Message, User, Email
 from .serializers import (
-    MessageSerializer, UserSerializer, SignUpSerializer, EmailSerializer,
+    MessageSerializer, SignUpSerializer,
     GetMessagesSerializer, SendMessageSerializer
 )
 from .confirmation_letter import send_confirmation_letter
@@ -99,13 +99,14 @@ class GetMessagesView(GenericAPIView):
             recipient_user = User.objects.get(
                 pk=validated_data['recipient_user_id']
             )
+        offset = validated_data['offset']
+        limit = validated_data['limit']
         messages = Message.objects.filter(
             Q(sender__exact=current_user) |
             Q(recipient__exact=recipient_user)
         ).order_by(
             '-sending_time'
-        )
-        # TODO: use limit and request params to filter the messages
+        )[offset:limit]
         message_serializer = MessageSerializer(messages, many=True)
         return Response(message_serializer.data)
 
