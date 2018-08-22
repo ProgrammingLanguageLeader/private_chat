@@ -1,4 +1,5 @@
 from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.status import HTTP_400_BAD_REQUEST
@@ -9,7 +10,8 @@ from django.utils.http import urlsafe_base64_decode
 
 from .models import Message, User, Email
 from .serializers import (
-    MessageSerializer, UserSerializer, SignUpSerializer, EmailSerializer
+    MessageSerializer, UserSerializer, SignUpSerializer, EmailSerializer,
+    GetMessagesSerializer, SendMessageSerializer
 )
 from .confirmation_letter import send_confirmation_letter
 from .tokens import account_activation_token
@@ -24,40 +26,27 @@ class TeapotView(APIView):
         )
 
 
-class SignUpView(APIView):
-    def post(self, request, format=None):
+class SignUpView(GenericAPIView):
+    serializer_class = SignUpSerializer
+
+    def post(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return Response(data='You must log out to perform this action')
-
         view_serializer = SignUpSerializer(data=request.data)
         if not view_serializer.is_valid():
             return Response(
                 data=view_serializer.errors,
                 status=HTTP_400_BAD_REQUEST
             )
-
-        # check if the email address is unique
-        email_address = view_serializer.validated_data['email']
-        email_serializer = EmailSerializer(data={
-            'address': email_address
-        })
-        if not email_serializer.is_valid():
-            return Response(
-                data=email_serializer.errors,
-                status=HTTP_400_BAD_REQUEST
-            )
-
-        user_serializer = UserSerializer(data=request.data)
-        if not user_serializer.is_valid():
-            return Response(
-                data=user_serializer.errors,
-                status=HTTP_400_BAD_REQUEST
-            )
-
-        user = User(**user_serializer.validated_data)
-        user.set_password(request.data['password'])
-        user.is_active = False
+        validated_data = view_serializer.validated_data
+        user = User(
+            username=validated_data['username'],
+            first_name=validated_data['first_name'],
+            last_name=validated_data['last_name']
+        )
+        user.set_password(validated_data['password'])
         user.save()
+        email_address = validated_data['email']
         email_object = Email(
             address=email_address,
             user=user,
@@ -92,38 +81,52 @@ class ActivateUserView(APIView):
         return Response(data='Activation link is invalid!')
 
 
-class GetMessagesView(APIView):
+class GetMessagesView(GenericAPIView):
     permission_classes = (IsAuthenticated, )
+    serializer_class = GetMessagesSerializer
 
-    def get(self, request, format=None):
-        current_user = request.user
-        if current_user.is_superuser:
-            messages = Message.objects.all()
-        else:
-            messages = Message.objects.filter(
-                Q(sender__exact=current_user) |
-                Q(recipient__exact=current_user)
+    def post(self, request, *args, **kwargs):
+        serializer = GetMessagesSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(
+                data=serializer.errors,
+                status=HTTP_400_BAD_REQUEST
             )
-        serializer = MessageSerializer(messages, many=True)
-        return Response(serializer.data)
+        validated_data = serializer.validated_data
+        current_user = request.user
+        recipient_user = current_user
+        if validated_data['recipient_user_id']:
+            recipient_user = User.objects.get(
+                pk=validated_data['recipient_user_id']
+            )
+        messages = Message.objects.filter(
+            Q(sender__exact=current_user) |
+            Q(recipient__exact=recipient_user)
+        ).order_by(
+            '-sending_time'
+        )
+        # TODO: use limit and request params to filter the messages
+        message_serializer = MessageSerializer(messages, many=True)
+        return Response(message_serializer.data)
 
 
-class SendMessageView(APIView):
+class SendMessageView(GenericAPIView):
+    serializer_class = SendMessageSerializer
     permission_classes = (IsAuthenticated, )
 
     def post(self, request, format=None):
-        sender = request.user.pk
-        recipient = request.data.get('recipient')
-        text = request.data.get('text')
-        serializer = MessageSerializer(data={
-            'sender': sender,
-            'recipient': recipient,
-            'text': text
-        })
-        if serializer.is_valid():
-            serializer.save()
-            return Response(data='OK')
-        return Response(
-            data=serializer.errors,
-            status=HTTP_400_BAD_REQUEST
+        serializer = SendMessageSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(
+                data=serializer.errors,
+                status=HTTP_400_BAD_REQUEST
+            )
+        validated_data = serializer.validated_data
+        current_user_id = request.user.id
+        message = Message(
+            sender_id=current_user_id,
+            recipient_id=validated_data['recipient_user_id'],
+            text=validated_data['text']
         )
+        message.save()
+        return Response(data='OK')

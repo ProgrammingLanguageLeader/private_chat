@@ -16,11 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views import generic
+from rest_framework_swagger.views import get_swagger_view
 
 from api.urls import urlpatterns as api_urls
 
+schema_view = get_swagger_view(title='Pastebin API')
 
 urlpatterns = [
+    path('docs/', schema_view),
     path(
         '',
         generic.RedirectView.as_view(

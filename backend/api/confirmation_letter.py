@@ -6,6 +6,7 @@ from django.template.loader import render_to_string
 from .tokens import account_activation_token
 
 
+# TODO: make this code asynchronous
 def send_confirmation_letter(current_site, user, email_address):
     if not email_address:
         raise ValueError("You must specify an email")
