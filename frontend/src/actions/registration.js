@@ -14,7 +14,6 @@ const register = (username, email, password, passwordConfirmation, firstName, la
             type: registrationConstants.REGISTRATION_SUCCESS,
             response: response
           });
-          history.push('/sign_in');
         },
         errors => {
           dispatch({

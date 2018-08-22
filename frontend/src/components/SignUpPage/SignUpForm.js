@@ -51,7 +51,10 @@ class SignUpForm extends Component {
         )}
         {(this.props.registration.success) && (
           <Group>
-            <Alert>The account has been successfully registered</Alert>
+            <Alert>
+              The account has been successfully registered. 
+              Please, confirm your email address to continue
+            </Alert>
           </Group>
         )}
         <Group>

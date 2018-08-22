@@ -10,7 +10,6 @@ const registrationReducer = (state = initialState, action) => {
       };
     }
     case registrationConstants.REGISTRATION_SUCCESS: {
-      console.log(action.response);
       return {
         success: true
       };
