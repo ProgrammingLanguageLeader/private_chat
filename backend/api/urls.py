@@ -9,8 +9,9 @@ from .views import (
     SignUpView,
     ActivateUserView,
     TeapotView,
-    GetMessagesView,
+    ObtainMessagesView,
     SendMessageView,
+    ObtainUserInfoView
 )
 
 
@@ -36,22 +37,32 @@ urlpatterns = [
     ),
     path(
         'auth/token/obtain/',
-        TokenObtainPairView.as_view()
+        TokenObtainPairView.as_view(),
+        name='obtain_token'
     ),
     path(
         'auth/token/refresh/',
-        TokenRefreshView.as_view()
+        TokenRefreshView.as_view(),
+        name='refresh_token'
     ),
     path(
         'teapot/',
-        TeapotView.as_view()
+        TeapotView.as_view(),
+        name='teapot'
     ),
     path(
-        'get_messages/',
-        GetMessagesView.as_view()
+        'obtain_messages/',
+        ObtainMessagesView.as_view(),
+        name='obtain_messages'
     ),
     path(
         'send_message/',
-        SendMessageView.as_view()
+        SendMessageView.as_view(),
+        name='send_message'
     ),
+    path(
+        'obtain_user_info/',
+        ObtainUserInfoView.as_view(),
+        name='obtain_user_info'
+    )
 ]

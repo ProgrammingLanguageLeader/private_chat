@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.core.exceptions import ObjectDoesNotExist
 
 from .models import User, Message, Email
 
@@ -55,10 +56,11 @@ class SignUpSerializer(serializers.Serializer):
         return attrs
 
 
-class GetMessagesSerializer(serializers.Serializer):
+class ObtainMessagesSerializer(serializers.Serializer):
     recipient_user_id = serializers.IntegerField(
         default=None,
-        allow_null=True
+        allow_null=True,
+        min_value=1
     )
     offset = serializers.IntegerField(default=0)
     limit = serializers.IntegerField(
@@ -71,7 +73,7 @@ class GetMessagesSerializer(serializers.Serializer):
         try:
             if attrs['recipient_user_id']:
                 User.objects.get(pk=attrs['recipient_user_id'])
-        except User.DoesNotExist:
+        except ObjectDoesNotExist:
             raise serializers.ValidationError({
                 'recipient_user_id': [
                     'user does not exist'
@@ -81,7 +83,10 @@ class GetMessagesSerializer(serializers.Serializer):
 
 
 class SendMessageSerializer(serializers.Serializer):
-    recipient_user_id = serializers.IntegerField(required=True)
+    recipient_user_id = serializers.IntegerField(
+        required=True,
+        min_value=1
+    )
     text = serializers.CharField(
         required=True,
         max_length=4096
@@ -90,9 +95,28 @@ class SendMessageSerializer(serializers.Serializer):
     def validate(self, attrs):
         try:
             User.objects.get(pk=attrs['recipient_user_id'])
-        except User.DoesNotExist:
+        except ObjectDoesNotExist:
             raise serializers.ValidationError({
                 'recipient_user_id': [
+                    'user does not exist'
+                ]
+            })
+        return attrs
+
+
+class ObtainUserInfoSerializer(serializers.Serializer):
+    user_id = serializers.IntegerField(
+        required=True,
+        min_value=1
+    )
+
+    def validate(self, attrs):
+        try:
+            if attrs['user_id']:
+                User.objects.get(pk=attrs['user_id'])
+        except ObjectDoesNotExist:
+            raise serializers.ValidationError({
+                'user_id': [
                     'user does not exist'
                 ]
             })

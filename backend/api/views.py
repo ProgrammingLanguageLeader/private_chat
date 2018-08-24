@@ -11,14 +11,15 @@ from django.utils.http import urlsafe_base64_decode
 from .models import Message, User, Email
 from .serializers import (
     MessageSerializer, SignUpSerializer,
-    GetMessagesSerializer, SendMessageSerializer
+    ObtainMessagesSerializer, SendMessageSerializer,
+    ObtainUserInfoSerializer, UserSerializer
 )
 from .confirmation_letter import send_confirmation_letter
 from .tokens import account_activation_token
 
 
 class TeapotView(APIView):
-    def get(self, request, format=None):
+    def get(self, request, *args, **kwargs):
         http_418_i_am_a_teapot = 418
         return Response(
             data='Teapot can\'t talk with you. He is busy now.',
@@ -81,12 +82,12 @@ class ActivateUserView(APIView):
         return Response(data='Activation link is invalid!')
 
 
-class GetMessagesView(GenericAPIView):
+class ObtainMessagesView(APIView):
     permission_classes = (IsAuthenticated, )
-    serializer_class = GetMessagesSerializer
+    serializer_class = ObtainMessagesSerializer
 
     def post(self, request, *args, **kwargs):
-        serializer = GetMessagesSerializer(data=request.data)
+        serializer = ObtainMessagesSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(
                 data=serializer.errors,
@@ -115,7 +116,7 @@ class SendMessageView(GenericAPIView):
     serializer_class = SendMessageSerializer
     permission_classes = (IsAuthenticated, )
 
-    def post(self, request, format=None):
+    def post(self, request, *args, **kwargs):
         serializer = SendMessageSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(
@@ -131,3 +132,22 @@ class SendMessageView(GenericAPIView):
         )
         message.save()
         return Response(data='OK')
+
+
+class ObtainUserInfoView(GenericAPIView):
+    serializer_class = ObtainUserInfoSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = ObtainUserInfoSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(
+                data=serializer.errors,
+                status=HTTP_400_BAD_REQUEST
+            )
+        user_id = serializer.validated_data['user_id']
+        user = User.objects.get(pk=user_id)
+        user_serializer = UserSerializer(user)
+        return Response(
+            data=user_serializer.data
+        )
+
