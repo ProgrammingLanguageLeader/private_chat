@@ -44,13 +44,15 @@ class SignInForm extends Component {
           <StyledTextBox 
             name="username" 
             type="text" 
-            placeholder="Username or email" 
+            placeholder="Username or email"
+            autoComplete="username"
             onChange={ this.onChange }
           />
           <StyledTextBox 
             name="password" 
             type="password" 
-            placeholder="Password" 
+            placeholder="Password"
+            autoComplete="current-password"
             onChange={ this.onChange }
           />
         </Group>

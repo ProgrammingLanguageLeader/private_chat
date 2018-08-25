@@ -61,25 +61,27 @@ class SignUpForm extends Component {
           <StyledTextBox 
             name="username" 
             type="text" 
-            placeholder="Username" 
+            placeholder="Username"
             onChange={this.onChange}
           />
           <StyledTextBox 
             name="email" 
             type="email" 
-            placeholder="Email" 
+            placeholder="Email"
             onChange={this.onChange}
           />
           <StyledTextBox 
             name="password" 
             type="password" 
-            placeholder="Password" 
+            placeholder="Password"
+            autoComplete="new-password"
             onChange={this.onChange}
           />
           <StyledTextBox 
             name="passwordConfirmation" 
             type="password" 
             placeholder="Password confirmation"
+            autoComplete="new-password"
             onChange={this.onChange}
           />
         </Group>

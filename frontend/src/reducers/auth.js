@@ -4,31 +4,49 @@ const accessToken = JSON.parse(localStorage.getItem('accessToken'));
 const refreshToken = JSON.parse(localStorage.getItem('refreshToken'));
 const initialState = accessToken ? {
   access: accessToken,
-  refresh: refreshToken
-} : {};
+  refresh: refreshToken,
+  fetching: false,
+  errors: '',
+} : {
+  access: '',
+  refresh: '',
+  fetching: false,
+  errors: '',
+};
 
 const authReducer = (state = initialState, action) => {
   switch (action.type) {
     case authConstants.LOGIN_REQUEST: {
       return {
-        loggingIn: true
+        ...state,
+        fetching: true,
+        errors: '',
       };
     }
     case authConstants.LOGIN_SUCCESS: {
-      const { access, refresh } = action;
-      localStorage.setItem('accessToken', JSON.stringify(access));
-      localStorage.setItem('refreshToken', JSON.stringify(refresh));
+      const { access, refresh } = action.payload;
       return {
-        access, refresh
+        ...state,
+        access,
+        refresh,
+        fetching: false,
       };
     }
     case authConstants.LOGIN_FAILURE: {
-      return {};
+      const { errors } = action.payload;
+      return {
+        ...state, 
+        fetching: false,
+        errors,
+      };
     }
     case authConstants.LOGOUT: {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      return {};
+      return {
+        access: '',
+        refresh: '',
+        fetching: false,
+        errors: '',
+      };
     }
     default: {
       return state;

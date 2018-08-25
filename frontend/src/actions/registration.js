@@ -11,14 +11,13 @@ const register = (username, email, password, passwordConfirmation, firstName, la
       .then(
         response => {
           dispatch({
-            type: registrationConstants.REGISTRATION_SUCCESS,
-            response: response
+            type: registrationConstants.REGISTRATION_SUCCESS
           });
         },
         errors => {
           dispatch({
             type: registrationConstants.REGISTRATION_FAILURE,
-            errors: errors.response.data
+            payload: errors.response.data
           });
         }
       );

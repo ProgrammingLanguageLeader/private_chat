@@ -1,22 +1,30 @@
 import { registrationConstants } from "../constants";
 
-const initialState = {};
+const initialState = {
+  fetching: false,
+  errors: [],
+};
 
 const registrationReducer = (state = initialState, action) => {
   switch (action.type) {
     case registrationConstants.REGISTRATION_REQUEST: {
       return {
-        registering: true
+        ...state,
+        fetching: true,
       };
     }
     case registrationConstants.REGISTRATION_SUCCESS: {
       return {
-        success: true
+        ...state,
+        fetching: false,
       };
     }
     case registrationConstants.REGISTRATION_FAILURE: {
+      const errors = action.payload;
       return {
-        errors: action.errors
+        ...state,
+        fetching: false,
+        errors,
       };
     }
     default: {
