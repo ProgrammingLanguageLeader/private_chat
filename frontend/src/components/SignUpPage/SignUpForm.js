@@ -44,7 +44,7 @@ class SignUpForm extends Component {
     return (
       <StyledForm onSubmit={this.onSubmit}>
         <StyledLabel>SIGN UP</StyledLabel>
-        {(this.props.registration.errors) && (
+        {(Object.keys(this.props.registration.errors).length > 0) && (
           <Group>
             <FormErrors formErrors={this.props.registration.errors}></FormErrors>
           </Group>
